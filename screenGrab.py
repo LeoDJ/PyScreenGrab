@@ -2,16 +2,16 @@ import tkinter as tk
 from tkinter import Canvas, Tk, Button
 import os
 import time
-import queue
 import threading
 import sys
 
 class CaptureTask(threading.Thread):
-    def __init__(self, queue):
+    def __init__(self):
         threading.Thread.__init__(self)
-        self.queue = queue
+        self.daemon = True
         self.capture_running = True
         print("Capture Task started")
+        self.start()
 
     def run(self):
         while self.capture_running:
@@ -51,7 +51,6 @@ class ConfigWindow:
     def __init__(self, master):
         self.master = master
         self.master.title('Screen Capture Settings')
-        self.master.protocol('WM_DELETE_WINDOW', self.handle_close)
         self.root_selection_window = None
         self.btn_selection_window = tk.Button(self.master, text='Select area', command=self.open_selection_window)
         self.lbl_output_x = tk.Label(self.master, text='Output Size X')
@@ -77,27 +76,8 @@ class ConfigWindow:
             self.root_selection_window.lift()
 
     def start_capture_task(self):
-        self.queue = queue.Queue()
-        global capture_running
-        capture_running = True
-        self.capture_task = CaptureTask(self.queue)
-        self.capture_task.start()
-        self.master.after(100, self.process_queue)
-    
-    def stop_capture_task(self):
-        print("Waiting for capture thread to stop...")
-        if hasattr(self, 'capture_task'):
-            self.capture_task.stop()
-
-    def process_queue(self):
-        try:
-            msg = self.queue.get(0)
-        except queue.Empty:
-            self.master.after(100, self.process_queue)
-
-    def handle_close(self):
-        self.stop_capture_task()
-        self.master.destroy()
+        if not hasattr(self, 'capture_task'):
+            self.capture_task = CaptureTask()
 
     def handle_selection_window_closed(self):
         self.root_selection_window.destroy()
@@ -110,7 +90,6 @@ def main():
     root = tk.Tk()
     app = ConfigWindow(root)
     root.mainloop()
-    sys.exit()
 
 
 if __name__ == '__main__':
