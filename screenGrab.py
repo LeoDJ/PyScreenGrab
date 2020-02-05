@@ -53,17 +53,15 @@ class ConfigWindow:
         self.master.title('Screen Capture Settings')
         self.root_selection_window = None
         self.btn_selection_window = tk.Button(self.master, text='Select area', command=self.open_selection_window)
-        self.lbl_output_x = tk.Label(self.master, text='Output Size X')
-        self.lbl_output_y = tk.Label(self.master, text='Output Size Y')
-        self.entry_output_x = tk.Spinbox(self.master, from_=1, to=1000, width=5)
+        self.lbl_output_xy = tk.Label(self.master, text='Output Size X/Y')
+        self.entry_output_x = tk.Spinbox(self.master, from_=1, to=1000, width=5) # TODO: validator
         self.entry_output_y = tk.Spinbox(self.master, from_=1, to=1000, width=5)
 
-        self.lbl_output_x.grid(row=0, column=0)
-        self.lbl_output_y.grid(row=1, column=0)
+        self.lbl_output_xy.grid(row=0, column=0)
         self.entry_output_x.grid(row=0, column=1)
-        self.entry_output_y.grid(row=1, column=1)
+        self.entry_output_y.grid(row=0, column=2)
         
-        self.btn_selection_window.grid(columnspan=2)
+        self.btn_selection_window.grid(columnspan=3)
 
     def open_selection_window(self):
         # only open one selection window
